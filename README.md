@@ -1,4 +1,4 @@
-puppet-quantum
-==============
+Puppet module for OpenStack Quantum
+===================================
 
-Quantum Puppet Module and Config Files
+(Work under development)
