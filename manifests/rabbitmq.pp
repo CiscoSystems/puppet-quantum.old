@@ -34,12 +34,6 @@ class quantum::rabbitmq(
     $service_ensure = 'stopped'
   }
 
-  class { 'rabbitmq::server':
-    service_ensure    => $service_ensure,
-    port              => $port,
-    delete_guest_user => $delete_guest_user,
-  }
-
   if ($enabled) {
     rabbitmq_vhost { $virtual_host:
       provider => 'rabbitmqctl',
