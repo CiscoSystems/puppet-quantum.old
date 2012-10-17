@@ -36,7 +36,8 @@ class quantum::plugins::ovs (
 
   vs_bridge {$integration_bridge:
     external_ids => "bridge-id=$ingration_bridge",
-    ensure       => present
+    ensure       => present,
+    require       => Service["openvswitch-switch"],
   }
 
   quantum::plugins::ovs::bridge{$bridge_mappings:}
