@@ -5,7 +5,16 @@ class quantum::server (
 
   Package["quantum-server"] -> Quantum_api_config<||>
   Quantum_config<||> ~> Service["quantum-server"]
+  Quantum_config<||> ~> Exec["quantum-restart"]
   Quantum_api_config<||> ~> Service["quantum-server"]
+  Quantum_api_config<||> ~> Exec["quantum-restart"]
+ 
+  
+
+
+  exec { "quantum-restart":
+    command => "/usr/sbin/service quantum-server restart",
+  }
 
   quantum_config {
     "DEFAULT/log_file":  value => $log_file
