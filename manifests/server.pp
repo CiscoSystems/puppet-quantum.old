@@ -12,9 +12,9 @@ class quantum::server (
   
 
 
-  exec { "quantum-restart":
-    command => "/usr/sbin/service quantum-server restart",
-  }
+#  exec { "quantum-restart":
+#    command => "/usr/sbin/service quantum-server restart",
+#  }
 
   quantum_config {
     "DEFAULT/log_file":  value => $log_file

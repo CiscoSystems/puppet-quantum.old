@@ -21,8 +21,16 @@ class quantum::agents::dhcp (
   package { 'quantum-dhcp-agent':
     name    => $::quantum::params::dhcp_package,
     ensure  => $package_ensure,
-    require => Class['quantum'],
+    require => Class['quantum'], Package['dnsmasq-base', 'dnsmasq-utils']],
   }
+
+  package { 'dnsmasq-base':
+ 	ensure => present,
+ 	}
+ 
+  package { 'dnsmasq-utils':
+         ensure => present,
+        }
 
   if $enabled {
     $ensure = 'running'
