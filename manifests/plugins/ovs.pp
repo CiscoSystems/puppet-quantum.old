@@ -1,4 +1,5 @@
 class quantum::plugins::ovs (
+  $enabled             = true,
   $bridge_uplinks      = ['br-virtual:eth1'],
   $bridge_mappings      = ['default:br-virtual'],
   $tenant_network_type  = "vlan",
@@ -40,9 +41,13 @@ class quantum::plugins::ovs (
     require       => Service["openvswitch-switch"],
   }
 
-  quantum::plugins::ovs::bridge{$bridge_mappings:}
+  quantum::plugins::ovs::bridge{$bridge_mappings:
+    before => Service['quantum-plugin-ovs-service'],
+  }
 
-  quantum::plugins::ovs::port{$bridge_uplinks:}
+  quantum::plugins::ovs::port{$bridge_uplinks:
+    before => Service['quantum-plugin-ovs-service'],
+  }
 
   package { "quantum-plugin-ovs":
     name    => $package,

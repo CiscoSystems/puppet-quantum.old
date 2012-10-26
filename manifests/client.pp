@@ -1,8 +1,8 @@
-class glance::client (
+class quantum::client (
   $ensure = present
 ) {
   package { "python-quantumclient":
-    name   => $::glance::params::client_package_name,
+    name   => $::quantum::params::client_package_name,
     ensure => $ensure
   }
 }

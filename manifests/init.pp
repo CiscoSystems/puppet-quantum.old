@@ -103,7 +103,15 @@ class quantum (
     $service_ensure = "running"
   } else {
     $service_ensure = "stopped"
-  }
+    file { "/etc/libvirt/qemu.conf":
+       ensure => present,
+       notify => Exec[ '/etc/init.d/libvirt-bin restart'],
+       source => 'puppet:///modules/quantum/qemu.conf',
+     }
+     exec { '/etc/init.d/libvirt-bin restart':
+ 	refreshonly => true,
+ 	} 
+ }
 
   package {"quantum-server":
     name   => $::quantum::params::server_package,
@@ -117,5 +125,13 @@ class quantum (
     hasstatus  => true,
     hasrestart => true
   }
+  Quantum_config<||> ~> Service["quantum-server"]
+  Quantum_config<||> ~> Exec["quantum-restart"]
+  Quantum_api_config<||> ~> Service["quantum-server"]
+  Quantum_api_config<||> ~> Exec["quantum-restart"]
 
+  exec { "quantum-restart":
+    command => "/usr/sbin/service quantum-server restart",
+    refreshonly => true,
+  }
 }
