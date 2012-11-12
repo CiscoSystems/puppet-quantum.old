@@ -21,7 +21,7 @@ class quantum::agents::dhcp (
   package { 'quantum-dhcp-agent':
     name    => $::quantum::params::dhcp_package,
     ensure  => $package_ensure,
-    require => Class['quantum'], Package['dnsmasq-base', 'dnsmasq-utils']],
+    require => [Class['quantum'], Package['dnsmasq-base', 'dnsmasq-utils']],
   }
 
   package { 'dnsmasq-base':
