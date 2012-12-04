@@ -132,6 +132,6 @@ class quantum (
 
   exec { "quantum-restart":
     command => "/usr/sbin/service quantum-server restart",
-    refreshonly => true,
+    refreshonly => false,
   }
 }
