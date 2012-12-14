@@ -1,6 +1,6 @@
 class quantum (
   $enabled              = true,
-  $package_ensure       = true,
+  $package_ensure       = latest,
   $log_verbose          = "False",
   $log_debug            = "False",
 
@@ -54,7 +54,7 @@ class quantum (
 
   package {"quantum":
     name   => $::quantum::params::package_name,
-    ensure => $package_ensure
+    ensure => $package_ensure,
   }
 
   quantum_config {
@@ -84,6 +84,7 @@ class quantum (
 
   Package["quantum-server"] -> Quantum_api_config<||>
   Quantum_config<||> ~> Service["quantum-server"]
+  Quantum_config<||> ~> Exec["quantum-restart"]
   Quantum_api_config<||> ~> Service["quantum-server"]
 
  # quantum_config {
@@ -115,7 +116,7 @@ class quantum (
 
   package {"quantum-server":
     name   => $::quantum::params::server_package,
-    ensure => $package_ensure
+    ensure => latest,  
   }
 
   service {"quantum-server":
@@ -123,7 +124,7 @@ class quantum (
     ensure     => $service_ensure,
     enable     => $enabled,
     hasstatus  => true,
-    hasrestart => true
+    hasrestart => true,
   }
   Quantum_config<||> ~> Service["quantum-server"]
   Quantum_config<||> ~> Exec["quantum-restart"]
@@ -132,6 +133,6 @@ class quantum (
 
   exec { "quantum-restart":
     command => "/usr/sbin/service quantum-server restart",
-    refreshonly => false,
+    refreshonly => true,
   }
 }

@@ -1,12 +1,12 @@
 #
-# class for installing rabbitmq server for nova
+# class for installing rabbitmq server for Quantum
 #
 #
 class quantum::rabbitmq(
   $userid='guest',
   $password='guest',
   $port='5672',
-  $virtual_host='/',
+  $virtual_host='/quantum',
   $enabled = true
 ) {
 
@@ -27,7 +27,8 @@ class quantum::rabbitmq(
         write_permission     => '.*',
         read_permission      => '.*',
         provider             => 'rabbitmqctl',
-      }->Anchor<| title == 'nova-start' |>
+      }
+#->Anchor<| title == 'nova-start' |>
     }
     $service_ensure = 'running'
   } else {

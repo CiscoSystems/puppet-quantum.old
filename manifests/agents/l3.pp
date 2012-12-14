@@ -10,6 +10,7 @@ class quantum::agents::l3 (
   Package["quantum-l3-agent"] -> Quantum_l3_agent_config<||>
   Quantum_config<||> ~> Service["quantum-l3"]
   Quantum_l3_agent_config<||> ~> Service["quantum-l3"]
+  Quantum_l3_agent_config<||> ~> Exec["quantum-l3-restart"]
 
   quantum_l3_agent_config {
     "DEFAULT/debug":                     value => $log_debug;
@@ -40,9 +41,17 @@ class quantum::agents::l3 (
   }
 
   service { 'quantum-l3':
-    name    => $::quantum::params::l3_service,
-    enable  => $enabled,
-    ensure  => $ensure,
-    require => [Package[$::quantum::params::l3_package], Class['quantum']],
+    name       => $::quantum::params::l3_service,
+    enable     => $enabled,
+    ensure     => $ensure,
+    require    => [Package[$::quantum::params::l3_package], Class['quantum']],
+    hasstatus  => true,
+    hasrestart => true,  
   }
+
+  exec { "quantum-l3-restart":
+    command     => "/usr/sbin/service quantum-l3-agent restart",
+    refreshonly => true,
+  }
+
 }
