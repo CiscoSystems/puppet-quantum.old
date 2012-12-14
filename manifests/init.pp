@@ -83,8 +83,6 @@ class quantum (
   require 'keystone::python'
 
   Package["quantum-server"] -> Quantum_api_config<||>
-  Quantum_config<||> ~> Service["quantum-server"]
-  Quantum_api_config<||> ~> Service["quantum-server"]
 
  # quantum_config {
  #   "DEFAULT/log_file":  value => $log_file
@@ -103,15 +101,16 @@ class quantum (
     $service_ensure = "running"
   } else {
     $service_ensure = "stopped"
-    file { "/etc/libvirt/qemu.conf":
-       ensure => present,
-       notify => Exec[ '/etc/init.d/libvirt-bin restart'],
-       source => 'puppet:///modules/quantum/qemu.conf',
-     }
-     exec { '/etc/init.d/libvirt-bin restart':
- 	refreshonly => true,
- 	} 
- }
+  }
+
+  file { "/etc/libvirt/qemu.conf":
+    ensure => present,
+    notify => Exec[ '/etc/init.d/libvirt-bin restart'],
+    source => 'puppet:///modules/quantum/qemu.conf',
+  }
+  exec { '/etc/init.d/libvirt-bin restart':
+    refreshonly => true,
+  } 
 
   package {"quantum-server":
     name   => $::quantum::params::server_package,
