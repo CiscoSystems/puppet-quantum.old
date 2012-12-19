@@ -6,5 +6,5 @@ define quantum::plugins::ovs::bridge {
     ensure       => present,
     external_ids => "bridge-id=${bridge}"
   }
-}
 
+}

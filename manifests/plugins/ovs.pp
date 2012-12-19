@@ -28,25 +28,27 @@ class quantum::plugins::ovs (
 
   Package["quantum-plugin-ovs"] -> Quantum_plugin_ovs<||>
   Quantum_config<||> ~> Service["quantum-plugin-ovs-service"]
+  Quantum_config<||> ~> Exec["ovs-agent-restart"]
   Quantum_plugin_ovs<||> ~> Service["quantum-plugin-ovs-service"]
+  Quantum_plugin_ovs<||> ~> Exec["ovs-agent-restart"]
 
-  class {
-    "vswitch":
-      provider => ovs
+  class { 'vswitch':
+    provider => ovs
   }
 
   vs_bridge {$integration_bridge:
     external_ids => "bridge-id=$ingration_bridge",
     ensure       => present,
-    require       => Service["openvswitch-switch"],
+    require      => Service["openvswitch-switch"],
   }
 
   quantum::plugins::ovs::bridge{$bridge_mappings:
-    before => Service['quantum-plugin-ovs-service'],
+    before  => Service['quantum-plugin-ovs-service'],
   }
 
   quantum::plugins::ovs::port{$bridge_uplinks:
-    before => Service['quantum-plugin-ovs-service'],
+    before  => Service['quantum-plugin-ovs-service'],
+    require => Quantum::Plugins::Ovs::Bridge[$bridge_mappings],
   }
 
   package { "quantum-plugin-ovs":
@@ -87,9 +89,19 @@ class quantum::plugins::ovs (
   }
 
   service { 'quantum-plugin-ovs-service':
-    name    => $::quantum::params::ovs_agent_service,
-    enable  => $enable,
-    ensure  => $service_ensure,
-    require => [Package[$package]]
+    name       => $::quantum::params::ovs_agent_service,
+    enable     => $enable,
+    ensure     => $service_ensure,
+    require    => [Package[$package]],
+    hasstatus  => true,
+    hasrestart => true,
   }
+
+  if !$server {
+    exec { "ovs-agent-restart":
+      command     => "/usr/sbin/service quantum-plugin-openvswitch-agent restart",
+      refreshonly => true,
+    }
+  }
+
 }

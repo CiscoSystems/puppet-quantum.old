@@ -8,6 +8,7 @@ class quantum::agents::dhcp (
   Package["quantum-dhcp-agent"] -> Quantum_dhcp_agent_config<||>
   Quantum_config<||> ~> Service["quantum-dhcp-service"]
   Quantum_dhcp_agent_config<||> ~> Service["quantum-dhcp-service"]
+  Quantum_dhcp_agent_config<||> ~> Exec["quantum-dhcp-restart"]
 
   quantum_dhcp_agent_config {
     "DEFAULT/debug":              value => $log_debug;
@@ -39,9 +40,17 @@ class quantum::agents::dhcp (
   }
 
   service { 'quantum-dhcp-service':
-    name    => $::quantum::params::dhcp_service,
-    enable  => $enabled,
-    ensure  => $ensure,
-    require => [Package[$::quantum::params::dhcp_package], Class['quantum']],
+    name       => $::quantum::params::dhcp_service,
+    enable     => $enabled,
+    ensure     => $ensure,
+    require    => [Package[$::quantum::params::dhcp_package], Class['quantum']],
+    hasstatus  => true,
+    hasrestart => true,  
   }
+
+  exec { "quantum-dhcp-restart":
+    command     => "/usr/sbin/service quantum-dhcp-agent restart",
+    refreshonly => true,
+  }
+
 }
