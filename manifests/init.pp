@@ -103,14 +103,21 @@ class quantum (
     $service_ensure = "running"
   } else {
     $service_ensure = "stopped"
+  }
+  if $nova_exists {
+    file { "/etc/libvirt":
+       ensure => directory,
+    }
     file { "/etc/libvirt/qemu.conf":
-       ensure => present,
-       notify => Exec[ '/etc/init.d/libvirt-bin restart'],
-       source => 'puppet:///modules/quantum/qemu.conf',
+       ensure  => present,
+       notify  => Exec[ '/etc/init.d/libvirt-bin restart'],
+       source  => 'puppet:///modules/quantum/qemu.conf',
+       require => File["/etc/libvirt"],
      }
      exec { '/etc/init.d/libvirt-bin restart':
- 	refreshonly => true,
- 	} 
+ 	     refreshonly => true,
+ 	   } 
+  }
  }
 
   package {"quantum-server":
