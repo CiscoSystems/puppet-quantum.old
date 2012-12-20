@@ -108,9 +108,6 @@ class quantum (
     notify => Exec[ '/etc/init.d/libvirt-bin restart'],
     source => 'puppet:///modules/quantum/qemu.conf',
   }
-  exec { '/etc/init.d/libvirt-bin restart':
- 	  refreshonly => true,
- 	}
 
   package {"quantum-server":
     name   => $::quantum::params::server_package,
