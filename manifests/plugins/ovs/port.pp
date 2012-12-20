@@ -1,8 +1,10 @@
 define quantum::plugins::ovs::port {
   $mapping = split($name, ":")
-  vs_port {$mapping[1]:
+  $bridge = $mapping[0]
+  $port = $mapping[1]
+  vs_port {$port:
     ensure => present,
-    bridge => $mapping[0]
-  }
+    bridge => $bridge,
+  } <- Vs_bridge[$bridge]
 }
 
